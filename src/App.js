@@ -10,7 +10,7 @@ function Todo({todo, completeTodo}){
   return(
     <div style={{marginTop: '1vh'}}>
       {todo.label}
-      <div>
+      <div style={{marginTop: '0.5vh'}}>
         <Button onClick={() => completeTodo(todo.id)}> completeTodo</Button>
       </div>
     </div>
@@ -21,7 +21,7 @@ function CompletedTodo( {todo, undoTodo} ){
   return(
     <div style={{marginTop: '1vh'}}>
       {todo.label}
-      <div>
+      <div style={{marginTop: '0.5vh'}}>
         <Button onClick={() => undoTodo(todo.id)}> Undo</Button>
       </div>
     </div>
@@ -33,7 +33,7 @@ function Counter( {todos , completedTodos} ){
   const completedNum = completedTodos.length;
   return(
     <div fixed="bottom" style={{marginTop: '5vh'}}>
-      <h1>{`Total Todos: ${totalNum}`}</h1>
+      <h1>{`Total Todo(s): ${totalNum}`}</h1>
       <h1>{`Completed: ${completedNum}`}</h1>
     </div>
   )
@@ -55,7 +55,7 @@ function TodoForm({ addTodo }){
       <Row >
       <Form.Group className="m-auto">
         <Col >
-          <Form.Label>Type your Todo...</Form.Label>
+          <Form.Label style={{fontWeight: 'bold'}}>Type your Todo...</Form.Label>
           <Form.Control value={value}
           onChange={e => setValue(e.target.value)} placeholder="Enter your todo" />
         </Col>
@@ -105,7 +105,7 @@ function App() {
         <TodoForm addTodo={ addTodo }/>
       </div>
       <h1 style={{marginTop: '3vh'}}>To do:</h1>
-      { todos.length === 0 ? <p>No Todo has been set</p> : null}
+      { todos.length === 0 ? <p style={{fontStyle: 'italic'}}>No Todo has been set</p> : null}
         <div className="todo-list">
           {todos.map((todo) => (
           <Todo 
@@ -115,8 +115,8 @@ function App() {
           ></Todo>
           ))}
         </div>
-        <h1>Completed:</h1>
-        { completedTodos.length === 0 ? <p>No Todo has been completed</p> : null}
+        <h1 style={{marginTop: '3vh'}}>Completed:</h1>
+        { completedTodos.length === 0 ? <p style={{fontStyle: 'italic'}}>No Todo has been completed</p> : null}
         <div>
           {completedTodos.map((todo) => 
               <CompletedTodo
