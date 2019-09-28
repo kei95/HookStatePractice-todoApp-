@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import { Form, Col, Row } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 const generateUID = () => Math.random().toString(36).substr(2,9);
@@ -8,16 +11,19 @@ function Todo({todo, completeTodo}){
     <div style={{marginTop: '1vh'}}>
       {todo.label}
       <div>
-        <button onClick={() => completeTodo(todo.id)}> completeTodo</button>
+        <Button onClick={() => completeTodo(todo.id)}> completeTodo</Button>
       </div>
     </div>
   )
 }
 
-function CompletedTodo( {todo} ){
+function CompletedTodo( {todo, undoTodo} ){
   return(
     <div style={{marginTop: '1vh'}}>
       {todo.label}
+      <div>
+        <Button onClick={() => undoTodo(todo.id)}> Undo</Button>
+      </div>
     </div>
   )
 }
@@ -26,7 +32,10 @@ function Counter( {todos , completedTodos} ){
   const totalNum = todos.length + completedTodos.length;
   const completedNum = completedTodos.length;
   return(
-    <h1>{`Total Todos: ${totalNum}, Completed: ${completedNum}`}</h1>
+    <div fixed="bottom" style={{marginTop: '5vh'}}>
+      <h1>{`Total Todos: ${totalNum}`}</h1>
+      <h1>{`Completed: ${completedNum}`}</h1>
+    </div>
   )
 }
 
@@ -42,15 +51,18 @@ function TodoForm({ addTodo }){
   }
 
   return(
-    <form onSubmit={handleSubmit}>
-    <input
-      type="text"
-      className="input"
-      value={value}
-      onChange={e => setValue(e.target.value)}
-    />
-    <button>Submit</button>
-  </form>
+    <Form onSubmit={handleSubmit}>
+      <Row >
+      <Form.Group className="m-auto">
+        <Col >
+          <Form.Label>Type your Todo...</Form.Label>
+          <Form.Control value={value}
+          onChange={e => setValue(e.target.value)} placeholder="Enter your todo" />
+        </Col>
+        <Button style={{marginTop: '1vh'}} onClick={handleSubmit}>Submit</Button>
+    </Form.Group>
+    </Row>
+  </Form>
   );
 }
 
@@ -69,7 +81,6 @@ function App() {
   };
 
   const completeTodo = id => {
-    debugger;
 
     const newArr = todos.filter(todo => todo.id !== id);
     const newTodos = newArr;
@@ -80,10 +91,22 @@ function App() {
     setTodos(newTodos);
   }
 
+  const undoTodo = id => {
+    const pickedTodo = completedTodos.filter(todo => todo.id === id);
+    const newTodoArr = [...todos, pickedTodo[0]];
+    const newCompletedTodoArr = completedTodos.filter(todo => todo.id !== id);
+    setTodos(newTodoArr);
+    setCompletedTodos(newCompletedTodoArr);
+  }
+
   return (
-    <div className="App">
-      <h1>To do</h1>
-        <div  className="todo-list">
+    <div style={{width: '95%'}} className="App">
+      <div>
+        <TodoForm addTodo={ addTodo }/>
+      </div>
+      <h1 style={{marginTop: '3vh'}}>To do:</h1>
+      { todos.length === 0 ? <p>No Todo has been set</p> : null}
+        <div className="todo-list">
           {todos.map((todo) => (
           <Todo 
           key={todo.id}
@@ -91,17 +114,15 @@ function App() {
           completeTodo={completeTodo}
           ></Todo>
           ))}
-          <div style={{marginTop: '3vh'}}>
-            <TodoForm addTodo={ addTodo }/>
-          </div>
         </div>
-        <div >
-          <h1>Done</h1>
+        <h1>Completed:</h1>
+        { completedTodos.length === 0 ? <p>No Todo has been completed</p> : null}
+        <div>
           {completedTodos.map((todo) => 
               <CompletedTodo
               key={todo.id}
               todo={todo}
-              completeTodo={completeTodo}
+              undoTodo={undoTodo}
               ></CompletedTodo>
             )}
           </div>
